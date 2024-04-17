@@ -1,0 +1,32 @@
+{
+    "textColor": "FFFFFF",
+    "backgroundColor": "000000",
+    "logoTextColor": "FFFFFF",
+    "barcode": { 
+    
+    },
+    "primary": {
+        "label": "",
+        "value": "Movie Club"
+    },
+    "secondary": [
+        {
+            "label": "Name",
+            "value": "Prashik"
+        },
+        {
+            "label": "                         Member Type",
+            "value": "Palace Movie Club"
+        }
+    ],
+    "auxiliary": [
+        {
+            "label": "",
+            "value": ""
+        },
+        {
+            "label": "",
+            "value": ""
+        }
+    ]
+}

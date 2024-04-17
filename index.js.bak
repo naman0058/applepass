@@ -1,0 +1,41 @@
+const express = require('express');
+const bodyParser = require('body-parser');
+const PassKit = require('passkit-generator');
+const fs = require('fs');
+
+const app = express();
+app.use(bodyParser.json());
+
+// Load your certificate, private key, and intermediate certificate PEM files
+const signerCert = fs.readFileSync('./certs/signerCert.pem');
+const signerKey = fs.readFileSync('./certs/signerKey.pem');
+const wwdrCert = fs.readFileSync('./certs/wwdr.pem');
+
+// Endpoint to generate passes
+app.post('/generate-pass', (req, res) => {
+  const passData = req.body; // Expecting pass data in request body
+
+  // Define primary and secondary fields in pass template
+  passData.primaryFields = [{ key: 'primary_field', label: 'Primary Field', value: 'Primary Value' }];
+  passData.secondaryFields = [{ key: 'secondary_field', label: 'Secondary Field', value: 'Secondary Value' }];
+
+  // Generate pass using passkit-generator and sign it with the provided certificate and private key
+  const pass = new PassKit(passData);
+  const signedPassBuffer = pass.generate({
+    cert: signerCert,
+    key: signerKey,
+    wwdrCert: wwdrCert, // Optional, include if your certificate chain includes an intermediate certificate
+  });
+
+  // Save the pass to local storage
+  const passFilePath = `path/to/save/generated_pass_${Date.now()}.pkpass`;
+  fs.writeFileSync(passFilePath, signedPassBuffer);
+
+  // Respond with the path to the saved pass file
+  res.send({ passFilePath });
+});
+
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Server is listening on port ${port}`);
+});
